@@ -9,7 +9,7 @@
 #include "gr/shared.h"
 #include "gr/sampling.h"
 #include "gr/algorithms/congruentSetExplorationBase.h"
-#include "matchBase.h"
+#include "PairwiseMatchBase.h"
 
 #ifdef TEST_GLOBAL_TIMINGS
 #   include "gr/utils/timer.h"
