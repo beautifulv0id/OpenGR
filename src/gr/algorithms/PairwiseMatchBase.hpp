@@ -22,8 +22,6 @@
 #endif
 
 
-// #define PairwiseMatchBase<PointType, TransformVisitor, OptExts ... >
-
 namespace gr {
 
 template <typename PointType, typename TransformVisitor, template < class, class > typename ... OptExts>
@@ -353,6 +351,4 @@ void PairwiseMatchBase<PointType, TransformVisitor, OptExts ... >
 }
 
 } // namespace gr
-
-// #undef PairwiseMatchBase<PointType, TransformVisitor, OptExts ... >
 
