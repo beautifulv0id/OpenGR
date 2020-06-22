@@ -2,6 +2,7 @@
 #define _OPENGR_ALGO_GRET_SDP_
 
 #include <vector>
+#include <Eigen/Dense>
 
 #ifdef OpenGR_USE_OPENMP
 #include <omp.h>
@@ -18,7 +19,7 @@ namespace gr{
 
 
 template < class Derived, class TBase>
-class GRETSDPOptions : public  TBase
+class GRET_SDP_Options : public  TBase
 {
 public:
     using Scalar = typename TBase::Scalar;
@@ -31,18 +32,20 @@ public:
 template <typename _PointType,
           typename _TransformVisitor,
           template < class, class > class ... OptExts >
-class GRET_SDP : public NAryMatchBase<_PointType, _TransformVisitor, OptExts ..., GRETSDPOptions> {
+class GRET_SDP : public NAryMatchBase<_PointType, _TransformVisitor, OptExts ..., GRET_SDP_Options> {
 
 public:
     using TransformVisitor = _TransformVisitor;
 
-    using MatchBaseType = NAryMatchBase<_PointType, _TransformVisitor, OptExts ..., GRETSDPOptions>;
+    using MatchBaseType = NAryMatchBase<_PointType, _TransformVisitor, OptExts ..., GRET_SDP_Options>;
     using PosMutablePoint = typename MatchBaseType::PosMutablePoint;
     using OptionsType = typename MatchBaseType::OptionsType;
 
     using Scalar = typename MatchBaseType::Scalar;
     using VectorType = typename MatchBaseType::VectorType;
     using MatrixType = typename MatchBaseType::MatrixType;
+    
+    using MatrixX = typename Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>;
 
     using LogLevel = typename MatchBaseType::LogLevel;
 
@@ -55,28 +58,32 @@ public:
 
     virtual ~GRET_SDP();
 
-    template <typename InputRange, template<typename> typename Sampler>  
-    void ComputeTransformations(const std::vector<InputRange>& P,
-                                int N_,
-                                int M_,
-                                int d_,
-                                Eigen::MatrixXd& L,
-                                std::vector<MatrixType>& transformations_,
-                                std::vector<VectorType>& translations_,
-                                const Sampler<_PointType>& sampler,
-                                TransformVisitor& v);
+    // computes registered points and corresponding transformations
+    template<typename PatchRange>
+    void RegisterPatches(const PatchRange& patches, const int n, TransformVisitor& v);
+
+    // returns registered points
+    template<typename PointRange>
+    void getRegisteredPatches(PointRange& registered_points);
+
+    // returns transformations
+    template<typename TrRange>
+    void getTransformations(TrRange& transformations);
 
     private:
-    // dimension, currently set to 3
     int d;
-    // number of points
-    int N;
-    // number of patches
-    int M;
+    int m;
+    int n;
 
-    template <typename InputRange>
-    void ComputeMatricesBDC(const std::vector<InputRange>& P, 
-                            Eigen::MatrixXd& L);
+    MatrixX O;
+    MatrixX OB;
+    MatrixX Linv;
+    
+    std::vector<std::pair<_PointType, int>> registered_points_;
+    std::vector<MatrixType> transformations_;
+
+    void SolveSDP(Eigen::Ref<const MatrixX> C, Eigen::Ref<MatrixX> G);
+
 
 }; /// class GRET_SDP
 } /// namespace gr
