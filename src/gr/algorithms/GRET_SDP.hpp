@@ -15,7 +15,7 @@
 #include "gr/shared.h"
 #include "gr/sampling.h"
 #include "gr/utils/logger.h"
-
+#include "gr/accelerators/SDPAWrapper.h"
 
 
 #ifdef TEST_GLOBAL_TIMINGS
@@ -76,7 +76,9 @@ void GRET_SDP<PointType, TransformVisitor, OptExts ... >::RegisterPatches(const 
     // solve the SDP (P2) using C
     MatrixX G(m*d, m*d);
 
-    SolveSDP(C, G);
+    SDPA_WRAPPER<Scalar> sdpa_solver;
+    sdpa_solver.Solve(C,G,d,m);
+    //SolveSDP(C, G);
 
     // compute top d eigenvalues and eigenvectors
     Eigen::EigenSolver<MatrixX> s(G);
