@@ -11,6 +11,7 @@
 #include "gr/shared.h"
 #include "gr/algorithms/NAryMatchBase.h"
 
+
 #ifdef TEST_GLOBAL_TIMINGS
 #   include "gr/utils/timer.h"
 #endif
@@ -59,7 +60,7 @@ public:
     virtual ~GRET_SDP();
 
     // computes registered points and corresponding transformations
-    template<typename PatchRange>
+    template<typename Solver, typename PatchRange>
     void RegisterPatches(const PatchRange& patches, const int n, TransformVisitor& v);
 
     // returns registered points
@@ -81,9 +82,6 @@ public:
     
     std::vector<std::pair<_PointType, int>> registered_points_;
     std::vector<MatrixType> transformations_;
-
-    void SolveSDP(Eigen::Ref<const MatrixX> C, Eigen::Ref<MatrixX> G);
-
 
 }; /// class GRET_SDP
 } /// namespace gr
