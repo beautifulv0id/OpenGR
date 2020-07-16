@@ -54,13 +54,6 @@ public:
     NAryMatchBase(const OptionsType& options, const Utils::Logger &logger);
 
     virtual ~NAryMatchBase();
-
-
-
-
-    protected:
-    /// vector of the transformations
-    std::vector<Eigen::Matrix<Scalar, 4, 4>> transforms_;
     
 
 }; /// class NAryMatchBase
